@@ -13,7 +13,7 @@ class Node {
     private Node Right;
     private String Value;
 
-    public Node(String Value) {
+    public Node(String Value) { //Used for root
         this.Value = Value;
         this.Left = null;
         this.Right = null;
@@ -43,6 +43,10 @@ class Node {
         return Parent;
     }
 
+    public void setValue(String Value) {
+        this.Value = Value;
+    }
+
     public void setLeft(Node Left) {
         this.Left = Left;
     }
@@ -55,8 +59,21 @@ class Node {
         this.Left = Left;
         this.Right = Right;
     }
-    public void setParent(Node Parent){
+
+    public void setParent(Node Parent) {
         this.Parent = Parent;
+    }
+
+    public int hasChildren() {
+        int i = 0;
+        if (getLeft() != null) {
+            i++;
+        }
+        if (getRight() != null) {
+            i++;
+        }
+        return i;
+
     }
 
 }
@@ -75,10 +92,12 @@ class BinaryTree {
     public void Insert(String newNode) {
         boolean sucess = false;
         Node target = root;
+
         while (!sucess) {
             if (root == null) {
                 Node in = new Node(newNode);
                 root = in;
+                NodeAmt++;
                 sucess = true;
             } else {
 
@@ -91,7 +110,7 @@ class BinaryTree {
                     } else {
                         target = target.getLeft();
                     }
-                } else if (compString(newNode, target.getValue()) > 0) {
+                } else {
                     if (target.getRight() == null) {
                         Node in = new Node(newNode, target);
                         target.setRight(in);
@@ -101,10 +120,6 @@ class BinaryTree {
                     } else {
                         target = target.getRight();
                     }
-                } else {
-                    System.out.println("Error, value: " + newNode + " is the same\ntry again");
-                    displayNode(target);
-                    break;
                 }
 
             }
@@ -116,40 +131,73 @@ class BinaryTree {
         inxVal = inxVal.toUpperCase();
         boolean sucess = false;
         Node target = root;
-        Node replacement, temp;
-        while (!sucess) {
-            if (target == null) {
-                System.out.println("Item not found");
-                break;
+        Node parent = null;
+        while (true) {
+            if (compString(inxVal, target.getValue()) < 0) {// if in node is less than root
+                parent = target;
+                target = target.getLeft();
+            } else if (compString(inxVal, target.getValue()) > 0) {
+                parent = target;
+                target = target.getRight();
+
             } else {
-                if (compString(inxVal, target.getValue()) < 0) {// if in node is less than root
-                    target = target.getLeft();
-                } else if (compString(inxVal, target.getValue()) > 0) {
-                    target = target.getRight();
+                System.out.println("Node found!");
+                displayNode(target);
+                sucess = true;
+                break;
+            }
 
+        }
+        if (!sucess) {
+            System.out.println("Item not found");
+            return false;
+        }
+        //Replacemnet node 
+
+        switch (target.hasChildren()) {
+            case 1, 0:
+                Node child = target.getLeft();
+                if (target.getLeft() == null) {
+                    child = target.getRight();
+                }
+
+                if (parent == null) {
+                    root = child; // Deleting root
+                } else if (parent.getLeft() == target) {
+                    parent.setLeft(child);
                 } else {
-                    System.out.println("Node found!");
-                    displayNode(target);
-                    sucess = true;
-
+                    parent.setRight(child);
                 }
 
-            }
-        }
-        if (sucess){ //Replacemnet node must 
-            replacement = target.getLeft().getRight();
-            while (compString(replacement.getValue(), replacement.getParent().getValue())<0) { //if the replacemnet is less than target's left node 
-                replacement=replacement.getRight();
-                if (replacement==null) {
-                    replacement=target.getLeft();
-                    break;
-                    
+                if (child != null) {
+                    child.setParent(parent);
                 }
-            }
-            target=replacement;
+                break;
+            case 2:
+                Node successorParent = target;
+                Node successor = target.getRight();
 
+                while (successor.getLeft() != null) {
+                    successorParent = successor;
+                    successor = successor.getLeft();
+                }
+
+                target.setValue(successor.getValue()); // Copy successor's value
+
+                // Delete successor
+                if (successorParent.getLeft() == successor) {
+                    successorParent.setLeft(successor.getRight());
+                } else {
+                    successorParent.setRight(successor.getRight());
+                }
+
+                if (successor.getRight() != null) {
+                    successor.getRight().setParent(successorParent);
+                }
+                break;
         }
 
+        NodeAmt--;
         return sucess;
     }
     // Search function
@@ -186,7 +234,7 @@ class BinaryTree {
         Node target = root;
         Node hold;
         boolean sucess = false;
-        int i =0;
+        int i = 0;
         int level = 1;
         List<Node> OrderedCodes = new ArrayList<>();
         OrderedCodes.add(target);
@@ -195,16 +243,16 @@ class BinaryTree {
 
         }
         String[] ReturnArray = new String[NodeAmt];
-        
+
         return ReturnArray;
     }
 
     public String[] InOrderC() {
-        List <String> pCodes = BTree.pCodes;
+        List<String> pCodes = BTree.pCodes;
         Collections.sort(pCodes, new CompareString());
         String[] ReturnArray = new String[pCodes.size()];
         for (int i = 0; i < pCodes.size(); i++) {
-            ReturnArray[i]=pCodes.get(i);
+            ReturnArray[i] = pCodes.get(i);
         }
         return ReturnArray;
     }
@@ -226,16 +274,6 @@ class BinaryTree {
         System.out.println();
     }
 
-    // public void displayNode(Node a) {
-    //     Node p = a.getParent();
-    //     System.out.println("Value: " + a.getValue());
-    //     if (a.getParent() != null) {
-    //         System.out.println("Parent node: " + p.getValue());
-    //     }
-    //     System.out.println();
-    // }
-
-    // A=new
     private Integer compString(String a, String b) {
         return a.compareTo(b);
     }
@@ -247,50 +285,14 @@ public class BTree {
     public static List<String> pCodes = new ArrayList<>();
 
     public static void main(String[] args) {
-        boolean imported = false;
-
         Scanner s = new Scanner(System.in);
-        BinaryTree test = new BinaryTree();
-        for (int i = 0; i < pCodes.size(); i++) {
-            test.Insert(pCodes.get(i));
-
+        BinaryTree Tree = new BinaryTree();
+        Import();
+        for (int i = 1; i < pCodes.size(); i++) {
+            Tree.Insert(pCodes.get(i));
         }
-        //System.out.println(Arrays.toString(test.InOrderC()));
-        System.out.println(test.getCount());
-        while (true) {
-
-            System.out.println("Input command:\t");
-            String q;
-            String cmd = s.next();
-            switch (cmd.toLowerCase()) {
-                case "import":
-                    if (!imported) {
-                        Import();
-                        for (int i = 0; i < pCodes.size(); i++) {
-                            test.Insert(pCodes.get(i));
-                        }
-                        imported = true;
-                    } else {
-                        System.out.println("Files already printed");
-                    }
-                    break;
-                case "search":
-                    System.out.println("Enter query:\t");
-                    q = s.next();
-                    test.Serach(q);
-                    break;
-                case "delete":
-                    System.out.println("Enter query:\t");
-                    q = s.next();
-                    test.Delete(q);
-                    break;
-                case "order":
-                    test.InOrderC();
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-        }
+        System.out.println(Tree.getCount());
+        Tree.Serach("W9 3DR");
 
     }
 
