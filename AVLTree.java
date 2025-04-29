@@ -1,13 +1,10 @@
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Stack;
 
 class Node {
@@ -104,7 +101,7 @@ class Node {
 
 }
 
-class AVLTree {
+public class AVLTree {
 
     private Node root = null;
     private int NodeAmt = 0;
@@ -354,7 +351,7 @@ class AVLTree {
                 // Visit the right subtree
                 current = current.getRight();
             }
-            Collections.sort(result, new CompareString());
+            Collections.sort(result);
             
             return result.toArray(new String[0]);
         }
@@ -427,41 +424,9 @@ class AVLTree {
         // Visit the right subtree
         current = current.getRight();
     }
-    Collections.sort(result, new CompareString());
+    Collections.sort(result);
     writer.close();
     System.out.println("File Saved");
     }
 }
-public class AVLTree {
 
-    public static List<String> pCodes = new ArrayList<>();
-
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        AVLTree Tree = new AVLTree();
-        Import();
-        for (int i = 1; i < pCodes.size(); i++) {
-            Tree.Insert(pCodes.get(i));
-        }
-        System.out.println(Tree.getCount());
-        Tree.Search("W9 3DR");
-
-
-    }
-
-    private static void Import() {
-        try {
-            File obj = new File("16000_London_Postcodes.txt");
-            Scanner Reader = new Scanner(obj);
-
-            while (Reader.hasNextLine()) {
-                pCodes.add(Reader.nextLine());
-            }
-            Reader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Error Occured");
-            e.printStackTrace();
-        }
-    }
-
-}
