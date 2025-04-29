@@ -1,14 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package data.structures.group3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
 
 class Node {
 
@@ -104,7 +104,7 @@ class Node {
 
 }
 
-public class AVLTree {
+class AVLTree {
 
     private Node root = null;
     private int NodeAmt = 0;
@@ -334,6 +334,49 @@ public class AVLTree {
 
         return sucess;
     }
+        // Returns Nodes in alphabetical order
+        public String[] InOrder() {
+            List<String> result = new ArrayList<>();
+            Stack<Node> stack = new Stack<>();
+            Node current = root;
+        
+            while (current != null || !stack.isEmpty()) {
+                // Go to the leftmost node
+                while (current != null) {
+                    stack.push(current);
+                    current = current.getLeft();
+                }
+        
+                // Visit the node
+                current = stack.pop();
+                result.add(current.getValue());
+        
+                // Visit the right subtree
+                current = current.getRight();
+            }
+            Collections.sort(result, new CompareString());
+            
+            return result.toArray(new String[0]);
+        }
+
+        public String displayNodeR(Node a) {
+            String R = "";
+            R=R+"Value: " + a.getValue();
+            if (a.getLeft() != null) {
+                R=R+"\nLeft node: " + a.getLeft().getValue();
+            }
+            if (a.getRight() != null) {
+                R=R+"\nRight node: " + a.getRight().getValue();
+            }
+    
+            if (a.getParent() != null) {
+                R=R+"\nParent node: " + a.getParent().getValue();
+            }
+    
+            R=R+"\n";
+            return R;
+        }
+
     public void displayNode(Node a) {
         System.out.println("Value: " + a.getValue());
         if (a.getLeft() != null) {
@@ -349,4 +392,76 @@ public class AVLTree {
 
         System.out.println();
     }
+    public void Output(String name) throws IOException{
+        //This part retrieves the local date and uses it as the CSV name
+        
+        String Filename = name+".csv";
+        FileWriter writer = new FileWriter(Filename);
+        writer.append(Arrays.toString(InOrder()));
+        writer.close();
+        System.out.println("File Saved");
+    }
+    //Spits out Nodes w/ relations
+    public void Output() throws IOException {
+        String Filename = "name.csv";
+        FileWriter writer = new FileWriter(Filename);
+        
+        
+        
+    List<String> result = new ArrayList<>();
+    Stack<Node> stack = new Stack<>();
+    Node current = root;
+
+    while (current != null || !stack.isEmpty()) {
+        // Go to the leftmost node
+        while (current != null) {
+            stack.push(current);
+            current = current.getLeft();
+        }
+
+        // Visit the node
+        current = stack.pop();
+        
+        writer.append(displayNodeR(current));
+
+        // Visit the right subtree
+        current = current.getRight();
+    }
+    Collections.sort(result, new CompareString());
+    writer.close();
+    System.out.println("File Saved");
+    }
+}
+public class AVLTree {
+
+    public static List<String> pCodes = new ArrayList<>();
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        AVLTree Tree = new AVLTree();
+        Import();
+        for (int i = 1; i < pCodes.size(); i++) {
+            Tree.Insert(pCodes.get(i));
+        }
+        System.out.println(Tree.getCount());
+        Tree.Search("W9 3DR");
+
+
+    }
+
+    private static void Import() {
+        try {
+            File obj = new File("16000_London_Postcodes.txt");
+            Scanner Reader = new Scanner(obj);
+
+            while (Reader.hasNextLine()) {
+                pCodes.add(Reader.nextLine());
+            }
+            Reader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Error Occured");
+            e.printStackTrace();
+        }
+    }
+
 }
