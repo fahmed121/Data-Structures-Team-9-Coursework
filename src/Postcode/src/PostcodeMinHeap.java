@@ -1,5 +1,4 @@
 
-
 public class PostcodeMinHeap {
 
     private String[] Heap;
@@ -130,51 +129,25 @@ public class PostcodeMinHeap {
 
     }
 
+
+
+
     //method to keep heap
-    public String[] InOrderKeep() {
+    public String[] InOrderKeep(){
         PostcodeMinHeap copy = new PostcodeMinHeap(maxSize);
         copy.size = this.size;
         System.arraycopy(this.Heap, 0, copy.Heap, 0, this.size + 1);
 
-        String[] array = new String[copy.size];
-        for (int i = 0; i < array.length; i++) {
+        String [] array = new String[copy.size];
+        for (int i = 0; i < array.length; i++){
             array[i] = copy.ExtractMinimum();
         }
         return array;
 
+
+
+
+
     }
 
-    // method to delete a specific postcode
-    public boolean delete(String postcode) {
-        int pcDelete = -1;
-        for (int i = 1; 1 <= size; i++) {
-            if (Heap[i].equals(postcode)) {
-                pcDelete = i;
-                return true;
-            }
-
-            // if postcode not found
-            if (pcDelete == -1) {
-                return false;
-            }
-
-            Heap[pcDelete] = Heap[size];
-            size--;
-
-            if (pcDelete <= size) {
-                siftUp(pcDelete);
-
-                if (Heap[pcDelete].equals(Heap[size + 1])) {
-                    siftDown(pcDelete);
-                }
-
-            }
-            return true;
-
-        }
-
-        return true;
-    }
-
-  
 }
