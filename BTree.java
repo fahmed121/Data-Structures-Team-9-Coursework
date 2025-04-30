@@ -1,4 +1,6 @@
 
+import BinarySearchTree.src.CompareString;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
